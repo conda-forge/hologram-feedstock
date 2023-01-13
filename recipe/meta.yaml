@@ -1,19 +1,26 @@
-{% set name = "hologram" %}
 {% set version = "0.0.15" %}
 
 
 package:
-  name: {{ name|lower }}
+  name: hologram
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/hologram-{{ version }}.tar.gz
-  sha256: 79b3d04df84d5a9d09c2e669ec5bcc50b1713ec79f4683cfdea85583b41e46f0
+  - folder: dist
+    url: https://pypi.io/packages/source/h/hologram/hologram-{{ version }}.tar.gz
+    sha256: 79b3d04df84d5a9d09c2e669ec5bcc50b1713ec79f4683cfdea85583b41e46f0
+    patches:
+      - 0000-relax-json-schema-pin.patch
+  - folder: src
+    url: https://github.com/dbt-labs/hologram/archive/refs/tags/v{{ version }}.tar.gz
+    sha256: 5c9c04c6dd22d2cebb9d1ff156f462ef350e8d6ba08294ce8940fc3b2841b9c9
+    patches:
+      - 0001-use-default-factory.patch
 
 build:
   noarch: python
-  number: 1
-  script: {{ PYTHON }} -m pip install . -vv
+  number: 2
+  script: cd dist && {{ PYTHON }} -m pip install . -vv --no-deps
 
 requirements:
   host:
@@ -26,14 +33,22 @@ requirements:
     - python-dateutil >=2.8,<2.9
 
 test:
+  source_files:
+    - src/tests
+  requires:
+    - pip
+    - pytest-cov
   imports:
     - hologram
+  commands:
+    - pip check
+    - pytest -vv src/tests --cov=hologram --cov-branch --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=90
 
 about:
   home: https://github.com/fishtown-analytics/hologram
   summary: JSON schema generation from dataclasses
   license: MIT
-  license_file: LICENSE
+  license_file: dist/LICENSE
 
 extra:
   recipe-maintainers:
