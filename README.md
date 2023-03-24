@@ -1,11 +1,11 @@
-About hologram
-==============
+About hologram-feedstock
+========================
+
+Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/hologram-feedstock/blob/main/LICENSE.txt)
 
 Home: https://github.com/fishtown-analytics/hologram
 
 Package license: MIT
-
-Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/hologram-feedstock/blob/main/LICENSE.txt)
 
 Summary: JSON schema generation from dataclasses
 
