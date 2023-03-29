@@ -9,8 +9,6 @@ source:
   - folder: dist
     url: https://pypi.io/packages/source/h/hologram/hologram-{{ version }}.tar.gz
     sha256: 1c2c921b4e575361623ea0e0d0aa5aee377b1a333cc6c6a879e213ed34583e55
-    patches:
-      - 0000-relax-json-schema-pin.patch
   - folder: src
     url: https://github.com/dbt-labs/hologram/archive/refs/tags/v{{ version }}.tar.gz
     sha256: b9d241a93624c7926035e181424b7be44fc398bf68285823c27532e91ff992da
@@ -20,16 +18,17 @@ source:
 build:
   noarch: python
   number: 0
-  script: cd dist && {{ PYTHON }} -m pip install . -vv --no-deps
+  script:
+    - cd dist && "{{ PYTHON }}" -c "__import__('shutil').rmtree('tests')"
+    - cd "{{ SRC_DIR }}/dist" && "{{ PYTHON }}" -m pip install . -vv --no-deps
 
 requirements:
   host:
     - pip
-    - python >=3.6
+    - python >=3.7
   run:
-    - dataclasses >=0.6,<0.9
     - jsonschema >=3.0
-    - python >=3.6
+    - python >=3.7
     - python-dateutil >=2.8,<2.9
 
 test:
@@ -42,7 +41,7 @@ test:
     - hologram
   commands:
     - pip check
-    - pytest -vv src/tests --cov=hologram --cov-branch --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=90
+    - cd src && pytest --pyargs tests -vv --cov=hologram --cov-branch --cov-report=term-missing:skip-covered --no-cov-on-fail --cov-fail-under=90
 
 about:
   home: https://github.com/fishtown-analytics/hologram
