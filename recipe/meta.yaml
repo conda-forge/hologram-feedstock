@@ -7,7 +7,7 @@ package:
 
 source:
   - folder: dist
-    url: https://pypi.io/packages/source/h/hologram/hologram-{{ version }}.tar.gz
+    url: https://pypi.org/packages/source/h/hologram/hologram-{{ version }}.tar.gz
     sha256: 1c2c921b4e575361623ea0e0d0aa5aee377b1a333cc6c6a879e213ed34583e55
   - folder: src
     url: https://github.com/dbt-labs/hologram/archive/refs/tags/v{{ version }}.tar.gz
@@ -17,7 +17,7 @@ source:
 
 build:
   noarch: python
-  number: 0
+  number: 1
   script:
     - cd dist && "{{ PYTHON }}" -c "__import__('shutil').rmtree('tests')"
     - cd "{{ SRC_DIR }}/dist" && "{{ PYTHON }}" -m pip install . -vv --no-deps
@@ -25,10 +25,10 @@ build:
 requirements:
   host:
     - pip
-    - python >=3.7
+    - python {{ python_min }}
   run:
     - jsonschema >=3.0
-    - python >=3.7
+    - python >={{ python_min }}
     - python-dateutil >=2.8,<2.9
 
 test:
@@ -37,6 +37,7 @@ test:
   requires:
     - pip
     - pytest-cov
+    - python {{ python_min }}
   imports:
     - hologram
   commands:
